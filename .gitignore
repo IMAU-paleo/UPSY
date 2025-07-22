@@ -1,0 +1,10 @@
+# Ignore executables
+UPSY_program
+UPSY_program_dev
+UPSY_program_perf
+
+# Ignore build files
+build/*
+
+# Ignore Mac files
+*.DS_Store
