@@ -1,11 +1,11 @@
-name: UPSY Test Suite - compile and cache UPSY
-run-name: ${{ github.actor }} - UPSY Test Suite - compile and cache UPSY
+name: UPSY Test Suite - compile and cache UPSY (development build) on Linux
+run-name: ${{ github.actor }} - UPSY Test Suite - compile and cache UPSY (development build) on Linux
 on:
   workflow_call:
   workflow_dispatch:
 
 jobs:
-  compile_UPSY_dev:
+  compile_UPSY_dev_MacOS:
     runs-on: macos-latest
     steps:
 
