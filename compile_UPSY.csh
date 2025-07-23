@@ -48,6 +48,9 @@ endif
 
 echo ""
 
+# If no build directory exists, create it
+if (! -d build) mkdir build
+
 # For a "clean" build, remove all build files first
 if ($selection == 'clean') rm -rf build/*
 
@@ -64,6 +67,7 @@ if ($version == 'dev') then
     -DDO_ASSERTIONS=ON \
     -DDO_RESOURCE_TRACKING=ON \
     -DEXTRA_Fortran_FLAGS="\
+      -fdiagnostics-color=always;\
       -Og;\
       -Wall;\
       -ffree-line-length-none;\
@@ -84,6 +88,7 @@ else if ($version == 'perf') then
     -DDO_ASSERTIONS=OFF \
     -DDO_RESOURCE_TRACKING=OFF \
     -DEXTRA_Fortran_FLAGS="\
+      -fdiagnostics-color=always;\
       -O3;\
       -Wall;\
       -ffree-line-length-none;\
@@ -100,17 +105,17 @@ cd ..
 # Copy compiled program
 if ($version == 'dev') then
 
-  rm -f UPSY_program_dev
-  mv build/UPSY_program UPSY_program_dev
-  rm -f UPSY_program
-  cp UPSY_program_dev UPSY_program
+  rm -f UPSY_unit_test_program_dev
+  mv build/UPSY_unit_test_program UPSY_unit_test_program_dev
+  rm -f UPSY_unit_test_program
+  cp UPSY_unit_test_program_dev UPSY_unit_test_program
 
 else if ($version == 'perf') then
 
-  rm -f UPSY_program_perf
-  mv build/UPSY_program UPSY_program_perf
-  rm -f UPSY_program
-  cp UPSY_program_perf UPSY_program
+  rm -f UPSY_unit_test_program_perf
+  mv build/UPSY_unit_test_program UPSY_unit_test_program_perf
+  rm -f UPSY_unit_test_program
+  cp UPSY_unit_test_program_perf UPSY_unit_test_program
 
 endif
 

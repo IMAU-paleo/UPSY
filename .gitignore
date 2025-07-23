@@ -1,10 +1,13 @@
 # Ignore executables
-UPSY_program
-UPSY_program_dev
-UPSY_program_perf
+UPSY_unit_test_program
+UPSY_unit_test_program_dev
+UPSY_unit_test_program_perf
 
 # Ignore build files
 build/*
 
 # Ignore Mac files
 *.DS_Store
+
+# Ignore automated test results
+automated_testing/unit_tests/results/*

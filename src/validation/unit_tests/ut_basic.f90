@@ -8,6 +8,7 @@ module ut_basic
   private
 
   public :: foldername_unit_tests_output, filename_unit_tests_output, unit_test
+  public :: create_unit_tests_output_folder, create_unit_tests_output_file
 
   ! Module variables
   character(len=1024) :: foldername_unit_tests_output
@@ -62,5 +63,77 @@ contains
     end if
 
   end subroutine unit_test
+
+  !> Create the unit test output file
+  subroutine create_unit_tests_output_file
+
+    ! Local variables:
+    character(len=1024), parameter :: routine_name = 'create_unit_tests_output_folder'
+    integer                        :: io_unit_test_file
+    integer                        :: stat
+    character(len=512)             :: msg
+
+    ! Add routine to path
+    call init_routine( routine_name)
+
+    filename_unit_tests_output = trim( foldername_unit_tests_output) // '/unit_tests_output.txt'
+
+    if (par%primary) then
+      ! Create file
+      open(newunit = io_unit_test_file, file = filename_unit_tests_output, status = "new", action = "write", &
+        iostat = stat, iomsg = msg)
+      if (stat /= 0) then
+        call crash('Could not create unit test output file, error message "' // trim(msg) // '"')
+      end if
+      close(io_unit_test_file)
+    end if
+    call sync
+
+    ! Finalise routine path
+    call finalise_routine( routine_name)
+
+  end subroutine create_unit_tests_output_file
+
+  !> Create the unit test output folder
+  subroutine create_unit_tests_output_folder( foldername)
+
+    ! In/output variables:
+    character(len=*), intent(in) :: foldername
+
+    ! Local variables:
+    character(len=1024), parameter :: routine_name = 'create_unit_tests_output_folder'
+    logical                        :: ex
+    character(len=1024)            :: cwd
+
+    ! Add routine to path
+    call init_routine( routine_name)
+
+    foldername_unit_tests_output = foldername
+
+    ! Create the directory
+    if (par%primary) then
+
+      ! Remove existing folder if necessary
+      inquire( file = trim( foldername_unit_tests_output) // '/.', exist = ex)
+      if (ex) then
+        call system('rm -rf ' // trim( foldername_unit_tests_output))
+      end if
+
+      ! Create output directory
+      CALL system('mkdir ' // trim( foldername_unit_tests_output))
+
+      ! Tell the user where it is
+      call getcwd( cwd)
+      write(0,'(A)') ''
+      write(0,'(A)') ' Output directory: ' // colour_string( trim(cwd)//'/'//trim( foldername_unit_tests_output), 'light blue')
+      write(0,'(A)') ''
+
+    end if
+    call sync
+
+    ! Finalise routine path
+    call finalise_routine( routine_name)
+
+  end subroutine create_unit_tests_output_folder
 
 end module ut_basic

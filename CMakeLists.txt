@@ -3,29 +3,45 @@ project(UPSY LANGUAGES Fortran)
 
 set(CMAKE_Fortran_STANDARD 2018)
 
-file(GLOB_RECURSE UPSY_SOURCES "src/*.f90")
+# Collect source files
+file(GLOB_RECURSE ALL_SOURCES "src/*.f90")
 
-add_executable(UPSY_program ${UPSY_SOURCES})
+# Remove all *_program.f90 except for UPSY_unit_test_program.f90
+foreach(src ${ALL_SOURCES})
+    if(src MATCHES ".*/[^/]*_program[.]f90$" AND NOT src MATCHES ".*/UPSY_unit_test_program[.]f90$")
+        list(REMOVE_ITEM ALL_SOURCES "${src}")
+    endif()
+endforeach()
+
+# Create executable with all sources
+add_executable(UPSY_unit_test_program ${ALL_SOURCES})
 
 # Enable preprocessing for all Fortran files
-target_compile_options(UPSY_program PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
+target_compile_options(UPSY_unit_test_program PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
 
 # Optionally enable assertions
 option(DO_ASSERTIONS "Compile UPSY with assertions" ON)
 if(DO_ASSERTIONS)
-    target_compile_definitions(UPSY_program PRIVATE DO_ASSERTIONS)
+    target_compile_definitions(UPSY_unit_test_program PRIVATE DO_ASSERTIONS)
 endif()
 
 # Optionally enable resource tracking
 option(DO_RESOURCE_TRACKING "Compile UPSY with resource tracking" ON)
 if(DO_RESOURCE_TRACKING)
-    target_compile_definitions(UPSY_program PRIVATE DO_RESOURCE_TRACKING)
+    target_compile_definitions(UPSY_unit_test_program PRIVATE DO_RESOURCE_TRACKING)
 endif()
 
 # Optionally provide extra compiler flags
 set(EXTRA_Fortran_FLAGS "" CACHE STRING "Extra gfortran compiler flags")
 if(EXTRA_Fortran_FLAGS)
-    target_compile_options(UPSY_program PRIVATE ${EXTRA_Fortran_FLAGS})
+    target_compile_options(UPSY_unit_test_program PRIVATE ${EXTRA_Fortran_FLAGS})
+endif()
+
+# Detect platform
+if(APPLE)
+    set(IS_MACOS TRUE)
+elseif(UNIX)
+    set(IS_LINUX TRUE)
 endif()
 
 # =============
@@ -36,7 +52,7 @@ endif()
 find_package(MPI REQUIRED Fortran)
 
 # Add include directories and link libraries
-target_link_libraries(UPSY_program PRIVATE MPI::MPI_Fortran)
+target_link_libraries(UPSY_unit_test_program PRIVATE MPI::MPI_Fortran)
 
 # ===========
 # == PETSc ==
@@ -49,7 +65,11 @@ include_directories(${PETSC_INCLUDE_DIRS})
 link_directories(${PETSC_LIBRARY_DIRS})
 add_definitions(${PETSC_CFLAGS_OTHER})
 
-target_link_libraries(UPSY_program PRIVATE ${PETSC_LIBRARY_DIRS}/libpetsc.dylib)
+if(IS_LINUX)
+    target_link_libraries(UPSY_unit_test_program PRIVATE ${PETSC_LIBRARIES})
+elseif(IS_MACOS)
+    target_link_libraries(UPSY_unit_test_program PRIVATE ${PETSC_LIBRARY_DIRS}/libpetsc.dylib)
+endif()
 
 # ============
 # == NetCDF ==
@@ -62,4 +82,8 @@ include_directories(${NETCDF_INCLUDE_DIRS})
 link_directories(${NETCDF_LIBRARY_DIRS})
 add_definitions(${NETCDF_CFLAGS_OTHER})
 
-target_link_libraries(UPSY_program PRIVATE ${NETCDF_LIBRARY_DIRS}/libnetcdff.dylib)
+if(IS_LINUX)
+    target_link_libraries(UPSY_unit_test_program PRIVATE ${NETCDF_LIBRARIES})
+elseif(IS_MACOS)
+    target_link_libraries(UPSY_unit_test_program PRIVATE ${NETCDF_LIBRARY_DIRS}/libnetcdff.dylib)
+endif()
