@@ -27,10 +27,10 @@ jobs:
   install_and_cache_Matlab:
     uses: ./.github/workflows/UPSY_test_suite_install_and_cache_Matlab.yml
 
-  # # Run the unit tests and analyse the results
-  # run_unit_tests:
-  #   needs: [compile_and_cache_UPSY_dev, install_and_cache_Matlab]
-  #   uses: ./.github/workflows/UPSY_test_suite_run_unit_tests.yml
+  # Run the unit tests and analyse the results
+  run_unit_tests:
+    needs: [compile_and_cache_UPSY_dev_MacOS]
+    uses: ./.github/workflows/UPSY_test_suite_run_unit_tests.yml
 
   # analyse_unit_tests:
   #   needs: run_unit_tests
