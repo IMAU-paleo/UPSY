@@ -36,9 +36,9 @@ jobs:
       - name: Compile UPSY
         run: ./compile_UPSY.csh  perf  clean
 
-      - name: Cache UPSY program            # TijnB: caching is quite slow, and not optimal here since
-        uses: actions/cache/save@v3            # we assume the model code will be changed whenever this workflow
-        id: UPSY_program_cache_save         # is run, so we need to recompile the code anyway.
-        with:                                  # So: use artifacts instead!
-          path: UPSY_program
-          key: UPSY_program_perf_${{ github.ref_name }}_${{ github.run_id }}
+      - name: Cache UPSY unit test program
+        uses: actions/cache/save@v3
+        id: UPSY_unit_test_program_cache_save
+        with:
+          path: UPSY_unit_test_program
+          key: UPSY_unit_test_program_perf_${{ github.ref_name }}_${{ github.run_id }}

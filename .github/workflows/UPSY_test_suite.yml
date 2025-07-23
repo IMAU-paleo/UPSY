@@ -10,7 +10,7 @@ on:
 
 jobs:
 
-  # Compile the model and cache the executable
+  # Compile the code and cache the executable(s)
   compile_and_cache_UPSY_dev:
     uses: ./.github/workflows/UPSY_test_suite_compile_and_cache_UPSY_dev.yml
 
@@ -20,10 +20,6 @@ jobs:
   # Install and cache Matlab
   install_and_cache_Matlab:
     uses: ./.github/workflows/UPSY_test_suite_install_and_cache_Matlab.yml
-
-  # # Install and cache Python
-  # install_and_cache_Python:
-  #   uses: ./.github/workflows/UPSY_test_suite_install_and_cache_Python.yml
 
   # # Run the unit tests and analyse the results
   # run_unit_tests:
