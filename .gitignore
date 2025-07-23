@@ -10,4 +10,4 @@ build/*
 *.DS_Store
 
 # Ignore automated test results
-automated_testing/unit_tests/results/*
+#automated_testing/unit_tests/results/*
