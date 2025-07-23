@@ -136,7 +136,7 @@ contains
     ! In/output variables:
     character(len=*), intent(in   ) :: filename
     integer,          intent(in   ) :: ncid
-    type(type_mesh),  intent(  out) :: mesh
+    type(type_mesh),  intent(inout) :: mesh
 
     ! Local variables:
     character(len=1024), parameter :: routine_name = 'setup_mesh_from_file'
